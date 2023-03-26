@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import queue
+import time
 
 # Board Layout
 #-------------
@@ -12,9 +13,9 @@ import queue
 #  /Q1 | Q6\
 
 image_prefix = 'images/'
-background = cv2.imread(f'{image_prefix}board.png')
+#background = cv2.imread(f'{image_prefix}board.png')
 # define the height and width of the background image
-bg_height, bg_width, _ = background.shape
+bg_height, bg_width, _ = background = cv2.imread(f'{image_prefix}board.png').shape
 
 piece_types = {
     'P':'white_pawn.png', 'R':'white_rook.png', 'N':'white_knight.png', 'B':'white_bishop.png', 'Q':'white_queen.png', 'K':'white_king.png',
@@ -41,26 +42,16 @@ Q3 = {  'L': {8:(253, 52), 7:(308, 57), 6:(363, 61), 5:(417,67)},
         'J': {8:(207, 151), 7:(276, 178), 6:(341, 210), 5:(409, 235)},
         'I': {8:(182, 202), 7:(259, 240), 6:(334, 282), 5:(406, 317)}
     }
-# Q7 = {  'H': {9:(253, 52), 10:(308, 57), 11:(363, 61), 12:(417,67)},
-#         'G': {9:(231, 104), 10:(292, 118), 11:(350, 135), 12:(412, 152)},
-#         'F': {9:(207, 151), 10:(276, 178), 11:(341, 210), 12:(409, 235)},
-#         'E': {9:(182, 202), 10:(259, 240), 11:(334, 282), 12:(406, 317)}
-#     }
 Q4 = {  'H': {9:(bg_width - 161,516), 10:(bg_width - 126,471), 11:(bg_width - 96,426), 12:(bg_width - 63,383)},
         'G': {9:(bg_width - 232,469), 10:(bg_width - 185,427), 11:(bg_width - 141,380), 12:(bg_width - 96,335)},
         'F': {9:(bg_width - 301,425), 10:(bg_width - 242,380), 11:(bg_width - 186,337), 12:(bg_width - 127,294)},
         'E': {9:(bg_width - 370,381), 10:(bg_width - 300,339), 11:(bg_width - 230,295), 12:(bg_width - 159,247)}
     }
-# Q8 = {  'I': {12:(bg_width - 253, bg_height - 713), 11:(bg_width - 230, bg_height - 665), 10:(bg_width - 209, bg_height - 611), 9:(bg_width - 188, bg_height - 564)},
-#         'J': {12:(bg_width - 308, bg_height - 709), 11:(bg_width - 292, bg_height - 647), 10:(bg_width - 277, bg_height - 585), 9:(bg_width - 262, bg_height - 525)},
-#         'K': {12:(bg_width - 363, bg_height - 703), 11:(bg_width - 353, bg_height - 631), 10:(bg_width - 345, bg_height - 560), 9:(bg_width - 334, bg_height - 486)},
-#         'L': {12:(bg_width - 417, bg_height - 699), 11:(bg_width - 413, bg_height - 616), 10:(bg_width - 412, bg_height - 533), 9:(bg_width - 408, bg_height - 446)}
-#     }
 
-Q5 = {  'I': {12:(bg_width - 253, 52), 11:(bg_width - 308, 57), 10:(bg_width - 363, 61), 9:(bg_width - 417,67)},
-        'J': {12:(bg_width - 231, 104), 11:(bg_width - 292, 118), 10:(bg_width - 350, 135), 9:(bg_width - 412, 152)},
-        'K': {12:(bg_width - 207, 151), 11:(bg_width - 276, 178), 10:(bg_width - 341, 210), 9:(bg_width - 409, 235)},
-        'L': {12:(bg_width - 182, 202), 11:(bg_width - 259, 240), 10:(bg_width - 334, 282), 9:(bg_width - 406, 317)}
+Q5 = {  'L': {12:(bg_width - 253, 52), 11:(bg_width - 308, 57), 10:(bg_width - 363, 61), 9:(bg_width - 417,67)},
+        'K': {12:(bg_width - 231, 104), 11:(bg_width - 292, 118), 10:(bg_width - 350, 135), 9:(bg_width - 412, 152)},
+        'J': {12:(bg_width - 207, 151), 11:(bg_width - 276, 178), 10:(bg_width - 341, 210), 9:(bg_width - 409, 235)},
+        'I': {12:(bg_width - 182, 202), 11:(bg_width - 259, 240), 10:(bg_width - 334, 282), 9:(bg_width - 406, 317)}
     }
 Q6 = {  'H': {1:(bg_width - 253,712), 2:(bg_width - 230,665), 3:(bg_width - 209,611), 4:(bg_width - 188,564)},
         'G': {1:(bg_width - 308,709), 2:(bg_width - 292,647), 3:(bg_width - 277,585), 4:(bg_width - 262,525)},
@@ -90,15 +81,19 @@ def get(letter,number):
         if number >= 9 and number <= 12:
             return Q4[letter][number]
 
-pieces = []
-def place(shard=None):
+#pieces = []
+def place(background, pieces):
+    foreground = None
+    mask = None
+    mask_inv = None
+    foreground_bg = None
+    roi_bg = None
+    dst = None 
+    #background = None
     for piece in pieces:
-        #try:
-        print(str((piece[0],piece[1])))
-        print(str(get(piece[0],piece[1])))
-        center_x, center_y = get(piece[0],piece[1]) #shard[piece[0]][piece[1]]
-        #except:
-            #continue
+        #print(str((piece[0],piece[1])))
+        #print(str(get(piece[0],piece[1])))
+        center_x, center_y = get(piece[0],piece[1])
 
         # Load the images
         foreground = cv2.imread(f'{image_prefix}{piece_types[piece[2]]}')
@@ -124,15 +119,16 @@ def place(shard=None):
 
         # combine the foreground and background using the add function
         dst = cv2.add(roi_bg, foreground_bg)
+
         background[roi_y:roi_y+rows, roi_x:roi_x+cols] = dst
+    return background, pieces
 
 # display the resulting image
-def display():
+def display(background, mode=1):
     cv2.imshow("Result", background)
-    cv2.waitKey(0)
+    cv2.waitKey(mode)
+    time.sleep(0.5)
     cv2.destroyAllWindows()
-    #background = None
-    #background = cv2.imread(f'{image_prefix}board.png')
 
 def test():
     def load(shard):
@@ -148,10 +144,10 @@ def test():
     load(Q6)
 
     display()
+    pieces.clear()
+    background = cv2.imread(f'{image_prefix}board.png')
 
-#test()
-
-def startboardtest():
+def startboardtest(pieces=[]):
     def pawncreator(row, piece, order):
         for i in order:
             pieces.append((i, row, piece))
@@ -195,7 +191,85 @@ def startboardtest():
     pieces.append((order[6], row, 'N'))
     pieces.append((order[7], row, 'R'))
 
+    background = cv2.imread(f'{image_prefix}board.png')
+    background, pieces = place(background, pieces)
+    display(background)
+    return background, pieces
+
+def remove(piece, pieces):
+    pieces.remove(piece)
+    background = cv2.imread(f'{image_prefix}board.png')
+    background, pieces = place(background,pieces)
+    return background, pieces
+
+
+def deleteTest():
+    order = ['L','K','J','I','D','C','B','A']
+    row = 8
+    
+    pieces.append((order[4], row, 'Q'))
+    pieces.append((order[7], row, 'R'))
+
     place()
     display()
 
-startboardtest()
+    #print(str(pieces))
+    pieces.remove((order[4], row, 'Q'))
+    #print(str(pieces))
+    background = cv2.imread(f'{image_prefix}board.png')
+
+
+    background = place(background)
+    cv2.imshow("Result", background)
+    #cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+
+def simulateMoves():
+    order = ['L','K','J','I','D','C','B','A']
+    row = 8
+    background = cv2.imread(f'{image_prefix}board.png')
+    pieces = []
+
+    pieces.append((order[4], row, 'Q'))
+    pieces.append((order[7], row, 'R'))
+    background, pieces = place(background, pieces)
+    display(background)
+
+    background, pieces = remove(piece=(order[4], row, 'Q'), pieces=pieces)
+
+    pieces.append((order[4], 7, 'Q'))
+    background, pieces = place(background=background, pieces=pieces)
+    display(background)
+    #time.sleep(1)
+    background, pieces = remove(piece=(order[4], 7, 'Q'), pieces=pieces)
+
+    pieces.append((order[4], 6, 'Q'))
+    background, pieces = place(background=background, pieces=pieces)
+    display(background)
+    #time.sleep(1)
+    background, pieces = remove(piece=(order[4], 6, 'Q'), pieces=pieces)
+
+    pieces.append((order[4], 5, 'Q'))
+
+    background, pieces = place(background, pieces)
+    display(background)
+    background, pieces = remove(piece=(order[4], 5, 'Q'), pieces=pieces)
+
+    moves = [('I', 5, 'Q'),('I', 9, 'Q'),('E', 9, 'Q'),('E', 4, 'Q'),('D', 4, 'Q'),('D', 5, 'Q')]
+    i=0
+
+    while(True):
+        pieces.append(moves[i])
+        background, pieces = place(background=background, pieces=pieces)
+        display(background)
+        background, pieces = remove(piece=moves[i], pieces=pieces)
+        if i == 5:
+            i = 0
+        else:
+            i += 1
+
+#startboardtest()
+simulateMoves()
+
+
