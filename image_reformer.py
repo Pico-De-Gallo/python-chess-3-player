@@ -15,7 +15,7 @@ import time
 image_prefix = 'images/'
 #background = cv2.imread(f'{image_prefix}board.png')
 # define the height and width of the background image
-bg_height, bg_width, _ = background = cv2.imread(f'{image_prefix}board.png').shape
+bg_height, bg_width, _ = background = cv2.imread(f'{image_prefix}board.jpg').shape
 
 piece_types = {
     'P':'white_pawn.png', 'R':'white_rook.png', 'N':'white_knight.png', 'B':'white_bishop.png', 'Q':'white_queen.png', 'K':'white_king.png',
@@ -148,61 +148,87 @@ def test():
     background = cv2.imread(f'{image_prefix}board.png')
 
 def startboardtest(pieces=[]):
-    def pawncreator(row, piece, order):
+    lookup = {}
+    def pawncreator(row, piece, order, pieces, lookup):
         for i in order:
             pieces.append((i, row, piece))
+            lookup[(i,row)] = (i, row, piece)
+        return pieces, lookup
 
     #Red are A-H rows 1 and 2(pawns)
     order = ['A','B','C','D','E','F','G','H']
-    pawncreator(2,'W',order)
+    pieces, lookup = pawncreator(2,'W',order, pieces, lookup)
     row = 1
     pieces.append((order[0], row, 'C'))
+    lookup[(order[0], row)] = (order[0], row, 'C')
     pieces.append((order[1], row, 'H'))
+    lookup[(order[1], row)] = (order[1], row, 'H')
     pieces.append((order[2], row, 'S'))
+    lookup[(order[2], row)] = (order[2], row, 'S')
     pieces.append((order[3], row, 'I'))
+    lookup[(order[3], row)] = (order[3], row, 'I')
     pieces.append((order[4], row, 'U'))
+    lookup[(order[4], row)] = (order[4], row, 'U')
     pieces.append((order[5], row, 'S'))
+    lookup[(order[5], row)] = (order[5], row, 'S')
     pieces.append((order[6], row, 'H'))
+    lookup[(order[6], row)] = (order[6], row, 'H')
     pieces.append((order[7], row, 'C'))
+    lookup[(order[7], row)] = (order[7], row, 'C')
 
     #Black are HGFEIJKL 12 and 11(pawns)
     order = ['H','G','F','E','I','J','K','L']
-    pawncreator(11, 'p', order)
+    pieces, lookup = pawncreator(11, 'p', order, pieces, lookup)
     row = 12
     pieces.append((order[0], row, 'r'))
+    lookup[(order[0], row)] = (order[0], row, 'r')
     pieces.append((order[1], row, 'n'))
+    lookup[(order[1], row)] = (order[1], row, 'n')
     pieces.append((order[2], row, 'b'))
+    lookup[(order[2], row)] = (order[2], row, 'b')
     pieces.append((order[3], row, 'k'))
+    lookup[(order[3], row)] = (order[3], row, 'k')
     pieces.append((order[4], row, 'q'))
+    lookup[(order[4], row)] = (order[4], row, 'q')
     pieces.append((order[5], row, 'b'))
+    lookup[(order[5], row)] = (order[5], row, 'b')
     pieces.append((order[6], row, 'n'))
+    lookup[(order[6], row)] = (order[6], row, 'n')
     pieces.append((order[7], row, 'r'))
+    lookup[(order[7], row)] = (order[7], row, 'r')
 
     #White is LKJIDCBA rows 8 and 7(pawns)
     order = ['L','K','J','I','D','C','B','A']
-    pawncreator(7, 'P', order)
+    pieces, lookup = pawncreator(7, 'P', order, pieces, lookup)
     row = 8
     pieces.append((order[0], row, 'R'))
+    lookup[(order[0], row)] = (order[0], row, 'R')
     pieces.append((order[1], row, 'N'))
+    lookup[(order[1], row)] = (order[1], row, 'N')
     pieces.append((order[2], row, 'B'))
+    lookup[(order[2], row)] = (order[2], row, 'B')
     pieces.append((order[3], row, 'K'))
+    lookup[(order[3], row)] = (order[3], row, 'K')
     pieces.append((order[4], row, 'Q'))
+    lookup[(order[4], row)] = (order[4], row, 'Q')
     pieces.append((order[5], row, 'B'))
+    lookup[(order[5], row)] = (order[5], row, 'B')
     pieces.append((order[6], row, 'N'))
+    lookup[(order[6], row)] = (order[6], row, 'N')
     pieces.append((order[7], row, 'R'))
+    lookup[(order[7], row)] = (order[7], row, 'R')
 
-    background = cv2.imread(f'{image_prefix}board.png')
+    background = cv2.imread(f'{image_prefix}board.jpg')
     background, pieces = place(background, pieces)
-    display(background)
-    return background, pieces
+    return background, pieces, lookup
 
 def remove(piece, pieces):
     pieces.remove(piece)
-    background = cv2.imread(f'{image_prefix}board.png')
+    background = cv2.imread(f'{image_prefix}board.jpg')
     background, pieces = place(background,pieces)
     return background, pieces
 
-
+#test function
 def deleteTest():
     order = ['L','K','J','I','D','C','B','A']
     row = 8
@@ -224,11 +250,11 @@ def deleteTest():
     #cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-
+#test function
 def simulateMoves():
     order = ['L','K','J','I','D','C','B','A']
     row = 8
-    background = cv2.imread(f'{image_prefix}board.png')
+    background = cv2.imread(f'{image_prefix}board.jpg')
     pieces = []
 
     pieces.append((order[4], row, 'Q'))
@@ -241,13 +267,11 @@ def simulateMoves():
     pieces.append((order[4], 7, 'Q'))
     background, pieces = place(background=background, pieces=pieces)
     display(background)
-    #time.sleep(1)
     background, pieces = remove(piece=(order[4], 7, 'Q'), pieces=pieces)
 
     pieces.append((order[4], 6, 'Q'))
     background, pieces = place(background=background, pieces=pieces)
     display(background)
-    #time.sleep(1)
     background, pieces = remove(piece=(order[4], 6, 'Q'), pieces=pieces)
 
     pieces.append((order[4], 5, 'Q'))
@@ -270,6 +294,69 @@ def simulateMoves():
             i += 1
 
 #startboardtest()
-simulateMoves()
+#simulateMoves()
 
+def interpretFEN(fen, lookup, background=cv2.imread(f'{image_prefix}board.jpg'), pieces=[]):
+    old = None
+    new = None
+    Upgrade = None
+    if len(fen) == 4:
+        old = fen[:2]
+        new = fen[2:4]
+    if len(fen) == 5:
+        Upgrade = fen[-1]
+        old = fen[:2]
+        new = fen[2:4]
+    print(f'old:{old}, new:{new}, upgrade:{Upgrade}')
+    var1 = 0
+    if old[1] == 'a': var1 = 10
+    elif old[1] == 'b': var1 = 11
+    elif old[1] == 'c': var1 = 12
+    else:
+        var1 = int(old[1])
+
+    try:
+        background, pieces = remove(piece=(str(old[0]).upper(), int(var1),lookup[(str(old[0]).upper(),int(var1))][2]), pieces=pieces)
+    except:
+        pass
+    
+    var = 0
+    if new[1] == 'a': var = 10
+    elif new[1] == 'b': var = 11
+    elif new[1] == 'c': var = 12
+    else:
+        var = int(new[1])
+
+    if Upgrade is not None:
+        pieces.append((str(old[0]).upper(), var, Upgrade))
+    else:
+        pieces.append((str(old[0]).upper(), var, lookup[(str(old[0]).upper(),int(var1))][2]))
+    background, pieces = place(background=background, pieces=pieces)
+    display(background, mode=0)
+
+
+def repl():
+    background = cv2.imread(f'{image_prefix}board.jpg')
+    background, pieces, lookup = startboardtest()
+    display(background, mode=0)
+    while True:
+        #display(background)
+        user_input = input('>> ') # prompt user for input
+        
+        try:
+            if user_input == 'exit':
+                exit()
+            if user_input == 'show':
+                display(background, mode=0)
+            else:
+                interpretFEN(fen=user_input, lookup=lookup, pieces=pieces,background=background)
+
+        except Exception as e:
+            print(f"Error: {e}") # handle errors gracefully
+repl()
+
+
+
+# interpretFEN('e2e4')
+# interpretFEN('ibicQ')
 
