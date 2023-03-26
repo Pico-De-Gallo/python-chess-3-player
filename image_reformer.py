@@ -4,10 +4,10 @@ import queue
 
 # Board Layout
 #-------------
-#  \Q3 | Q4/
+#  \Q3 | Q5/
 #   \  |  /
 #    \ | /   
-# Q2 / | \ Q5
+# Q2 / | \ Q4
 #   /  |  \
 #  /Q1 | Q6\
 
@@ -41,15 +41,26 @@ Q3 = {  'L': {8:(253, 52), 7:(308, 57), 6:(363, 61), 5:(417,67)},
         'J': {8:(207, 151), 7:(276, 178), 6:(341, 210), 5:(409, 235)},
         'I': {8:(182, 202), 7:(259, 240), 6:(334, 282), 5:(406, 317)}
     }
+# Q7 = {  'H': {9:(253, 52), 10:(308, 57), 11:(363, 61), 12:(417,67)},
+#         'G': {9:(231, 104), 10:(292, 118), 11:(350, 135), 12:(412, 152)},
+#         'F': {9:(207, 151), 10:(276, 178), 11:(341, 210), 12:(409, 235)},
+#         'E': {9:(182, 202), 10:(259, 240), 11:(334, 282), 12:(406, 317)}
+#     }
 Q4 = {  'H': {9:(bg_width - 161,516), 10:(bg_width - 126,471), 11:(bg_width - 96,426), 12:(bg_width - 63,383)},
         'G': {9:(bg_width - 232,469), 10:(bg_width - 185,427), 11:(bg_width - 141,380), 12:(bg_width - 96,335)},
         'F': {9:(bg_width - 301,425), 10:(bg_width - 242,380), 11:(bg_width - 186,337), 12:(bg_width - 127,294)},
         'E': {9:(bg_width - 370,381), 10:(bg_width - 300,339), 11:(bg_width - 230,295), 12:(bg_width - 159,247)}
     }
-Q5 = {  'I': {12:(bg_width - 253, bg_height - 713), 11:(bg_width - 230, bg_height - 665), 10:(bg_width - 209, bg_height - 611), 9:(bg_width - 188, bg_height - 564)},
-        'J': {12:(bg_width - 308, bg_height - 709), 11:(bg_width - 292, bg_height - 647), 10:(bg_width - 277, bg_height - 585), 9:(bg_width - 262, bg_height - 525)},
-        'K': {12:(bg_width - 363, bg_height - 703), 11:(bg_width - 353, bg_height - 631), 10:(bg_width - 345, bg_height - 560), 9:(bg_width - 334, bg_height - 486)},
-        'L': {12:(bg_width - 417, bg_height - 699), 11:(bg_width - 413, bg_height - 616), 10:(bg_width - 412, bg_height - 533), 9:(bg_width - 408, bg_height - 446)}
+# Q8 = {  'I': {12:(bg_width - 253, bg_height - 713), 11:(bg_width - 230, bg_height - 665), 10:(bg_width - 209, bg_height - 611), 9:(bg_width - 188, bg_height - 564)},
+#         'J': {12:(bg_width - 308, bg_height - 709), 11:(bg_width - 292, bg_height - 647), 10:(bg_width - 277, bg_height - 585), 9:(bg_width - 262, bg_height - 525)},
+#         'K': {12:(bg_width - 363, bg_height - 703), 11:(bg_width - 353, bg_height - 631), 10:(bg_width - 345, bg_height - 560), 9:(bg_width - 334, bg_height - 486)},
+#         'L': {12:(bg_width - 417, bg_height - 699), 11:(bg_width - 413, bg_height - 616), 10:(bg_width - 412, bg_height - 533), 9:(bg_width - 408, bg_height - 446)}
+#     }
+
+Q5 = {  'I': {12:(bg_width - 253, 52), 11:(bg_width - 308, 57), 10:(bg_width - 363, 61), 9:(bg_width - 417,67)},
+        'J': {12:(bg_width - 231, 104), 11:(bg_width - 292, 118), 10:(bg_width - 350, 135), 9:(bg_width - 412, 152)},
+        'K': {12:(bg_width - 207, 151), 11:(bg_width - 276, 178), 10:(bg_width - 341, 210), 9:(bg_width - 409, 235)},
+        'L': {12:(bg_width - 182, 202), 11:(bg_width - 259, 240), 10:(bg_width - 334, 282), 9:(bg_width - 406, 317)}
     }
 Q6 = {  'H': {1:(bg_width - 253,712), 2:(bg_width - 230,665), 3:(bg_width - 209,611), 4:(bg_width - 188,564)},
         'G': {1:(bg_width - 308,709), 2:(bg_width - 292,647), 3:(bg_width - 277,585), 4:(bg_width - 262,525)},
