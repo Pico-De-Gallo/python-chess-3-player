@@ -329,10 +329,13 @@ def interpretFEN(fen, lookup, background=cv2.imread(f'{image_prefix}board.jpg'),
 
     if Upgrade is not None:
         pieces.append((str(old[0]).upper(), var, Upgrade))
+        lookup[(str(old[0]).upper(),int(var))] = (str(old[0]).upper(), var, Upgrade)
     else:
         pieces.append((str(old[0]).upper(), var, lookup[(str(old[0]).upper(),int(var1))][2]))
+        lookup[(str(old[0]).upper(),int(var))] = (str(old[0]).upper(), var, lookup[(str(old[0]).upper(),int(var1))][2])
     background, pieces = place(background=background, pieces=pieces)
     display(background, mode=0)
+    return lookup, pieces, background
 
 
 def repl():
@@ -349,7 +352,7 @@ def repl():
             if user_input == 'show':
                 display(background, mode=0)
             else:
-                interpretFEN(fen=user_input, lookup=lookup, pieces=pieces,background=background)
+                lookup, pieces, background = interpretFEN(fen=user_input, lookup=lookup, pieces=pieces,background=background)
 
         except Exception as e:
             print(f"Error: {e}") # handle errors gracefully
