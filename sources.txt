@@ -1,0 +1,5 @@
+https://github.com/niklasf/python-chess
+Existing python library for a 2-player chess game through python. Expanded upon to suppor 3-player games.
+
+https://www.twilio.com/blog/play-chess-whatsapp-python-twilio
+Twilio blog post about using Twilio to facilitate a 2-player game with python
